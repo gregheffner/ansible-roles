@@ -1,15 +1,17 @@
 # System Update Role
 
-This Ansible role handles system updates for Debian/Ubuntu and macOS systems, including Docker container management and optional reboot functionality.
+This Ansible role handles comprehensive system updates for Debian/Ubuntu and macOS systems, including Docker container management and optional reboot functionality.
 
 ## Features
 
-- **Docker Management**: Restart all Docker containers
-- **Package Updates**: 
-  - APT packages for Debian/Ubuntu systems
+- **🐳 Docker Management**: Restart all Docker containers to pick up latest configurations
+- **📦 Package Updates**: 
+  - APT packages for Debian/Ubuntu systems (`apt update && apt upgrade`)
   - Homebrew packages for macOS systems
-- **System Maintenance**: Package cleanup and distribution upgrades
-- **Reboot Support**: Optional system reboot with post-reboot script execution
+  - Safe weekly updates vs comprehensive monthly updates
+- **🧹 System Maintenance**: Package cleanup and optional distribution upgrades  
+- **🔄 Reboot Support**: Optional system reboot with configurable timeouts
+- **🔧 Post-Reboot Scripts**: Run custom scripts after reboot (optional)
 
 ## Requirements
 
@@ -30,7 +32,7 @@ restart_docker_containers: true       # Restart all containers
 ```yaml
 update_packages: true                  # Enable package updates
 update_apt_packages: true             # Update APT packages (Debian/Ubuntu)
-perform_dist_upgrade: true            # Perform distribution upgrade
+perform_dist_upgrade: false           # Perform distribution upgrade (default: false for safety)
 cleanup_packages: true                # Clean up unused packages
 ```
 
@@ -46,98 +48,117 @@ cleanup_homebrew_packages: true       # Clean up old package versions
 ```yaml
 perform_reboot: false                  # Enable automatic reboot
 force_reboot: false                    # Force reboot regardless of necessity
-reboot_method: "modern"               # "modern" or "legacy"
+reboot_method: "modern"               # "modern" (reboot module) or "legacy" (shell command)
 reboot_timeout: 600                   # Timeout for reboot operation
 connect_timeout: 20                   # Connection timeout after reboot
 ```
 
-### Post-Reboot Script
+### Post-Reboot Script (Optional)
 ```yaml
-post_reboot_script_path: "/opt/1password/op-login.sh"  # Script to run after reboot
+post_reboot_script_path: ""           # Path to script to run after reboot
+# Example: post_reboot_script_path: "/opt/scripts/post-reboot.sh"
 ```
 
-## Example Playbook
+## Example Playbooks
 
-### Basic Usage
+### 1. Weekly Safe Updates (Recommended)
 ```yaml
 ---
 - hosts: localhost
+  become: true
+  vars:
+    perform_dist_upgrade: false        # Safe for automation
+    perform_reboot: true              # Reboot after updates
+    update_docker: true               # Restart Docker containers
   roles:
     - system_update
 ```
 
-### With Custom Variables
+### 2. Monthly Comprehensive Updates
 ```yaml
 ---
 - hosts: localhost
+  become: true
   vars:
+    perform_dist_upgrade: true        # More comprehensive
     perform_reboot: true
-    post_reboot_script_path: "/opt/1password/op-login.sh"
-  roles:
-    - system_update
-```
-
-### Advanced Configuration
-```yaml
----
-- hosts: localhost
-  vars:
     update_docker: true
-    restart_docker_containers: true
-    perform_dist_upgrade: true
     cleanup_packages: true
-    perform_reboot: true
-    reboot_method: "modern"
-    post_reboot_script_path: "/opt/1password/op-login.sh"
   roles:
     - system_update
 ```
 
-## Usage Examples
+### 3. Docker-only Updates
+```yaml
+---
+- hosts: localhost
+  vars:
+    update_packages: false            # Skip system packages
+    update_homebrew: false           # Skip Homebrew
+    perform_reboot: false            # No reboot needed
+    update_docker: true              # Only restart Docker
+  roles:
+    - system_update
+```
 
-1. **Update only packages (no reboot)**:
-   ```yaml
-   - hosts: localhost
-     vars:
-       perform_reboot: false
-     roles:
-       - system_update
-   ```
+### 4. Basic Package Updates (No Reboot)
+```yaml
+---
+- hosts: localhost
+  become: true
+  vars:
+    perform_reboot: false            # Manual reboot later
+  roles:
+    - system_update
+```
 
-2. **Full system update with reboot and 1Password login**:
-   ```yaml
-   - hosts: localhost
-     vars:
-       perform_reboot: true
-       post_reboot_script_path: "/opt/1password/op-login.sh"
-     roles:
-       - system_update
-   ```
+## Installation
 
-3. **Docker-only updates**:
-   ```yaml
-   - hosts: localhost
-     vars:
-       update_packages: false
-       update_homebrew: false
-       perform_reboot: false
-     roles:
-       - system_update
-   ```
+### From GitHub
+```bash
+# Clone the repository
+git clone https://github.com/gregheffner/ansible-roles.git
+
+# Copy role to your roles directory
+cp -r ansible-roles/system_update ~/.ansible/roles/
+
+# Or use in requirements.yml
+- src: https://github.com/gregheffner/ansible-roles.git
+  scm: git
+  path: system_update
+  name: system_update
+```
+
+## What Gets Updated
+
+| Component | Debian/Ubuntu | macOS | Notes |
+|-----------|---------------|-------|-------|
+| System Packages | ✅ APT (`apt update && apt upgrade`) | ❌ | Safe weekly updates |
+| Distribution Upgrade | ⚠️ Optional (`apt dist-upgrade`) | ❌ | Disabled by default |
+| Package Manager | ✅ APT | ✅ Homebrew | Updates package lists |
+| Package Cleanup | ✅ `apt autoremove` | ✅ `brew cleanup` | Removes unused packages |
+| Docker Containers | ✅ Restart all | ✅ Restart all | Picks up new configurations |
+
+## Safety Features
+
+- **🛡️ Conservative Defaults**: `dist-upgrade` disabled by default for safety
+- **🔄 Flexible Reboots**: Choose between modern (reboot module) or legacy methods
+- **⚡ Fail-Safe**: Continue on errors for non-critical tasks
+- **📊 Detailed Reporting**: Shows what was updated and restart status
 
 ## File Structure
 ```
-roles/system_update/
+system_update/
 ├── defaults/main.yml      # Default variables
-├── handlers/main.yml      # Handlers
+├── handlers/main.yml      # Event handlers  
 ├── meta/main.yml         # Role metadata
 ├── tasks/
-│   ├── main.yml         # Main task file
-│   ├── docker.yml       # Docker-specific tasks
-│   ├── debian.yml       # Debian/Ubuntu tasks
-│   ├── homebrew.yml     # macOS Homebrew tasks
+│   ├── main.yml         # Main orchestration
+│   ├── docker.yml       # Docker container management
+│   ├── debian.yml       # Debian/Ubuntu package updates
+│   ├── homebrew.yml     # macOS Homebrew updates
 │   └── reboot.yml       # Reboot and post-reboot tasks
-└── README.md           # This file
+└── README.md           # This documentation
 ```
 
 ## License
@@ -146,4 +167,4 @@ MIT
 
 ## Author Information
 
-Created for automated system maintenance and updates.
+Created by [gregheffner](https://github.com/gregheffner) for automated system maintenance and updates.
