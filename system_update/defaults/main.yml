@@ -25,9 +25,7 @@ reboot_timeout: 600
 connect_timeout: 20
 
 # Post-reboot script settings
-# post_reboot_script_path: "/opt/1password/op-login.sh"
-# Note: If using OP_SERVICE_ACCOUNT_TOKEN environment variable, 
-# no post-reboot script is needed - authentication is automatic
+# Leave empty when using environment-based authentication (like OP_SERVICE_ACCOUNT_TOKEN)
 post_reboot_script_path: ""
 
 # Update behavior
