@@ -62,7 +62,7 @@ post_reboot_script_path: ""           # Path to script to run after reboot
     perform_reboot: true              # Reboot after updates
     update_docker: true               # Restart Docker containers
   roles:
-    - system_update
+    - gregheffner.ansible_role_ubuntu_update
 ```
 
 ### 2. Monthly Comprehensive Updates
@@ -76,7 +76,7 @@ post_reboot_script_path: ""           # Path to script to run after reboot
     update_docker: true
     cleanup_packages: true
   roles:
-    - system_update
+    - gregheffner.ansible_role_ubuntu_update
 ```
 
 ### 3. Docker-only Updates
@@ -88,7 +88,7 @@ post_reboot_script_path: ""           # Path to script to run after reboot
     perform_reboot: false            # No reboot needed
     update_docker: true              # Only restart Docker
   roles:
-    - system_update
+    - gregheffner.ansible_role_ubuntu_update
 ```
 
 ### 4. Basic Package Updates (No Reboot)
@@ -99,24 +99,32 @@ post_reboot_script_path: ""           # Path to script to run after reboot
   vars:
     perform_reboot: false            # Manual reboot later
   roles:
-    - system_update
+    - gregheffner.ansible_role_ubuntu_update
 ```
 
 ## Installation
 
+### From Ansible Galaxy (Recommended)
+```bash
+# Install from Galaxy
+ansible-galaxy install gregheffner.ansible_role_ubuntu_update
+
+# Or add to requirements.yml
+- name: gregheffner.ansible_role_ubuntu_update
+```
+
 ### From GitHub
 ```bash
 # Clone the repository
-git clone https://github.com/gregheffner/ansible-roles.git
+git clone https://github.com/gregheffner/ansible-role-ubuntu-update.git
 
 # Copy role to your roles directory
-cp -r ansible-roles/system_update ~/.ansible/roles/
+cp -r ansible-role-ubuntu-update ~/.ansible/roles/
 
 # Or use in requirements.yml
-- src: https://github.com/gregheffner/ansible-roles.git
+- src: https://github.com/gregheffner/ansible-role-ubuntu-update.git
   scm: git
-  path: system_update
-  name: system_update
+  name: ubuntu_update
 ```
 
 ## What Gets Updated
