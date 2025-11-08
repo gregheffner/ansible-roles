@@ -11,12 +11,6 @@ update_apt_packages: true
 perform_dist_upgrade: false  # Changed to false for safer weekly updates
 cleanup_packages: true
 
-# Homebrew settings (macOS)
-update_homebrew: true
-update_homebrew_packages: true
-upgrade_homebrew_packages: true
-cleanup_homebrew_packages: true
-
 # Reboot settings
 perform_reboot: false
 force_reboot: false

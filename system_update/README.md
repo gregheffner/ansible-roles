@@ -1,13 +1,12 @@
 # System Update Role
 
-This Ansible role handles comprehensive system updates for Debian/Ubuntu and macOS systems, including Docker container management and optional reboot functionality.
+This Ansible role handles comprehensive system updates for Ubuntu systems, including Docker container management and optional reboot functionality.
 
 ## Features
 
 - **🐳 Docker Management**: Restart all Docker containers to pick up latest configurations
 - **📦 Package Updates**: 
-  - APT packages for Debian/Ubuntu systems (`apt update && apt upgrade`)
-  - Homebrew packages for macOS systems
+  - APT packages for Ubuntu systems (`apt update && apt upgrade`)
   - Safe weekly updates vs comprehensive monthly updates
 - **🧹 System Maintenance**: Package cleanup and optional distribution upgrades  
 - **🔄 Reboot Support**: Optional system reboot with configurable timeouts
@@ -16,9 +15,9 @@ This Ansible role handles comprehensive system updates for Debian/Ubuntu and mac
 ## Requirements
 
 - Ansible 2.9+
+- Ubuntu system (role will fail on non-Ubuntu systems)
 - Appropriate privileges for package management (sudo/become)
 - Docker (optional, for Docker-related tasks)
-- Homebrew (optional, for macOS systems)
 
 ## Role Variables
 
@@ -31,17 +30,9 @@ restart_docker_containers: true       # Restart all containers
 ### Package Update Settings
 ```yaml
 update_packages: true                  # Enable package updates
-update_apt_packages: true             # Update APT packages (Debian/Ubuntu)
+update_apt_packages: true             # Update APT packages (Ubuntu)
 perform_dist_upgrade: false           # Perform distribution upgrade (default: false for safety)
 cleanup_packages: true                # Clean up unused packages
-```
-
-### Homebrew Settings (macOS)
-```yaml
-update_homebrew: true                  # Enable Homebrew tasks
-update_homebrew_packages: true        # Update Homebrew itself
-upgrade_homebrew_packages: true       # Upgrade installed packages
-cleanup_homebrew_packages: true       # Clean up old package versions
 ```
 
 ### Reboot Settings
@@ -94,7 +85,6 @@ post_reboot_script_path: ""           # Path to script to run after reboot
 - hosts: localhost
   vars:
     update_packages: false            # Skip system packages
-    update_homebrew: false           # Skip Homebrew
     perform_reboot: false            # No reboot needed
     update_docker: true              # Only restart Docker
   roles:
@@ -131,13 +121,13 @@ cp -r ansible-roles/system_update ~/.ansible/roles/
 
 ## What Gets Updated
 
-| Component | Debian/Ubuntu | macOS | Notes |
-|-----------|---------------|-------|-------|
-| System Packages | ✅ APT (`apt update && apt upgrade`) | ❌ | Safe weekly updates |
-| Distribution Upgrade | ⚠️ Optional (`apt dist-upgrade`) | ❌ | Disabled by default |
-| Package Manager | ✅ APT | ✅ Homebrew | Updates package lists |
-| Package Cleanup | ✅ `apt autoremove` | ✅ `brew cleanup` | Removes unused packages |
-| Docker Containers | ✅ Restart all | ✅ Restart all | Picks up new configurations |
+| Component | Ubuntu | Notes |
+|-----------|--------|-------|
+| System Packages | ✅ APT (`apt update && apt upgrade`) | Safe weekly updates |
+| Distribution Upgrade | ⚠️ Optional (`apt dist-upgrade`) | Disabled by default |
+| Package Manager | ✅ APT | Updates package lists |
+| Package Cleanup | ✅ `apt autoremove` | Removes unused packages |
+| Docker Containers | ✅ Restart all | Picks up new configurations |
 
 ## Safety Features
 
@@ -155,8 +145,7 @@ system_update/
 ├── tasks/
 │   ├── main.yml         # Main orchestration
 │   ├── docker.yml       # Docker container management
-│   ├── debian.yml       # Debian/Ubuntu package updates
-│   ├── homebrew.yml     # macOS Homebrew updates
+│   ├── debian.yml       # Ubuntu package updates
 │   └── reboot.yml       # Reboot and post-reboot tasks
 └── README.md           # This documentation
 ```

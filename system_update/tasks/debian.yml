@@ -1,5 +1,5 @@
 ---
-# Debian/Ubuntu package management tasks
+# Ubuntu package management tasks
 
 - name: Update APT cache (apt update)
   become: true
