@@ -8,18 +8,17 @@ restart_docker_containers: true
 # Package update settings
 update_packages: true
 update_apt_packages: true
-perform_dist_upgrade: false  # Changed to false for safer weekly updates
+perform_dist_upgrade: false
 cleanup_packages: true
 
 # Reboot settings
 perform_reboot: false
 force_reboot: false
-reboot_method: "modern"  # Options: "modern" (uses reboot module) or "legacy" (uses shell)
+reboot_method: "modern"
 reboot_timeout: 600
 connect_timeout: 20
 
 # Post-reboot script settings
-# Leave empty when using environment-based authentication (like OP_SERVICE_ACCOUNT_TOKEN)
 post_reboot_script_path: ""
 
 # Update behavior

@@ -21,7 +21,7 @@
   apt:
     upgrade: dist
   register: apt_dist_upgrade_result
-  when: perform_dist_upgrade | default(false)  # Changed from true to false
+  when: perform_dist_upgrade | default(false)
 
 - name: Clean up APT packages
   become: true

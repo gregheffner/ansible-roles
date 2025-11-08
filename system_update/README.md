@@ -4,13 +4,13 @@ This Ansible role handles comprehensive system updates for Ubuntu systems, inclu
 
 ## Features
 
-- **🐳 Docker Management**: Restart all Docker containers to pick up latest configurations
-- **📦 Package Updates**: 
+- **Docker Management**: Restart all Docker containers to pick up latest configurations
+- **Package Updates**: 
   - APT packages for Ubuntu systems (`apt update && apt upgrade`)
   - Safe weekly updates vs comprehensive monthly updates
-- **🧹 System Maintenance**: Package cleanup and optional distribution upgrades  
-- **🔄 Reboot Support**: Optional system reboot with configurable timeouts
-- **🔧 Post-Reboot Scripts**: Run custom scripts after reboot (optional)
+- **System Maintenance**: Package cleanup and optional distribution upgrades  
+- **Reboot Support**: Optional system reboot with configurable timeouts
+- **Post-Reboot Scripts**: Run custom scripts after reboot (optional)
 
 ## Requirements
 
@@ -123,18 +123,18 @@ cp -r ansible-roles/system_update ~/.ansible/roles/
 
 | Component | Ubuntu | Notes |
 |-----------|--------|-------|
-| System Packages | ✅ APT (`apt update && apt upgrade`) | Safe weekly updates |
-| Distribution Upgrade | ⚠️ Optional (`apt dist-upgrade`) | Disabled by default |
-| Package Manager | ✅ APT | Updates package lists |
-| Package Cleanup | ✅ `apt autoremove` | Removes unused packages |
-| Docker Containers | ✅ Restart all | Picks up new configurations |
+| System Packages | APT (`apt update && apt upgrade`) | Safe weekly updates |
+| Distribution Upgrade | Optional (`apt dist-upgrade`) | Disabled by default |
+| Package Manager | APT | Updates package lists |
+| Package Cleanup | `apt autoremove` | Removes unused packages |
+| Docker Containers | Restart all | Picks up new configurations |
 
 ## Safety Features
 
-- **🛡️ Conservative Defaults**: `dist-upgrade` disabled by default for safety
-- **🔄 Flexible Reboots**: Choose between modern (reboot module) or legacy methods
-- **⚡ Fail-Safe**: Continue on errors for non-critical tasks
-- **📊 Detailed Reporting**: Shows what was updated and restart status
+- **Conservative Defaults**: `dist-upgrade` disabled by default for safety
+- **Flexible Reboots**: Choose between modern (reboot module) or legacy methods
+- **Fail-Safe**: Continue on errors for non-critical tasks
+- **Detailed Reporting**: Shows what was updated and restart status
 
 ## File Structure
 ```
